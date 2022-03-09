@@ -35,7 +35,7 @@ Gibbs = function(nchain, data, init, prop_sd){
     
     
     
-    # Mise à jour de Y
+    # Mise à jour de tau_c
     
   }
 }
