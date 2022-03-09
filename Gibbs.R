@@ -21,4 +21,21 @@ xbar <-22.0
 
 Gibbs = function(nchain, data, init, prop_sd){
   
+  
+  beta0 = 
+  alpha0 = 
+  
+  
+  for (i in 1:nchain){
+    # Mise a jour de alpha
+    
+    
+    
+    # Mise a jour de beta
+    
+    
+    
+    # Mise à jour de Y
+    
+  }
 }
