@@ -17,8 +17,3 @@ colnames(y) = c("Jour 8","Jour 15","Jour 22","Jour 29","Jour 36")
 
 x <- c(8.0, 15.0, 22.0, 29.0, 36.0)
 xbar <-22.0
-<<<<<<< HEAD
-
-# Modification3
-=======
->>>>>>> 2b4daebe55388e55ace36041bf93fd06293ab3f8
