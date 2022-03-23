@@ -1,0 +1,41 @@
+---
+title: "Projet Rat"
+author: "Tom Léchappé"
+date: "16/03/2022"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+$\alpha_{c} \sim \mathcal{N}(O,\,\sigma_{a}^{2})$ ; $\alpha_{i} \sim \mathcal{N}(\alpha_{c},\,\sigma_{\alpha}^{2})$
+
+\begin{align}
+\Pi(\alpha_{c}|...) &\propto \Pi(\alpha_{c}) \prod_{i=1}^{n_{i}} \Pi(\alpha_{i}|\alpha_{c},\sigma_{\alpha}^{2} ) \\
+        &\propto \exp\left(\frac{-\alpha_{c}^{2}}{2\sigma_{a}^{2}}\right)\prod_{i=1}^{n_{i}} \exp\left(\frac{-(\alpha_{i}-\alpha_{c})^{2}}{2\sigma_{\alpha}^{2}}\right) \\
+        &\propto \exp\left(\frac{-\alpha_{c}^{2}}{2\sigma_{a}^{2}}\right)\prod_{i=1}^{n_{i}} \exp\left(\frac{-(\alpha_{c}^{2}-2\alpha_{i}\alpha_{c})}{2\sigma_{\alpha}^{2}}\right) \\
+        &\propto \exp\left(\frac{-\alpha_{c}^{2}}{2\sigma_{a}^{2}}\right)\prod_{i=1}^{n_{i}} \exp\left(\frac{-ni\alpha_{c}^{2}+2\alpha_{c}\sum\limits_{i=1}^{n_{i}} \alpha_{i}}{2\sigma_{\alpha}^{2}}\right)\\
+        &\propto \exp\left(\frac{-\alpha_{c}^{2}(\sigma_{\alpha}^{2}+ni\sigma_{a}^{2}) +2\alpha_{c}\sigma_{a}^{2}\sum\limits_{i=1}^{n_{i}} \alpha_{i}}{2\sigma_{a}^{2}\sigma_{\alpha}^{2}}\right)\\
+        &\sim \mathcal{N}\left(\frac{\sigma_{a}^{2}\sum\limits_{i=1}^{n_{i}} \alpha_{i}}{\sigma_{\alpha}^{2}+n_{i}\sigma_{a}^{2}},\frac{\sigma_{a}^{2}\sigma_{\alpha}^{2}}{\sigma_{\alpha}^{2}+n_{i}\sigma_{a}^{2}}\right)
+\end{align}
+
+
+
+
+$\sigma_{\alpha}^{2} \sim InvGamma(a_{\alpha},b_{\alpha})$
+
+\begin{align}
+\Pi(\sigma_{\alpha}^{2}|...) &\propto \Pi(\sigma_{\alpha}^{2}) \prod_{i=1}^{n_{i}}\Pi(\alpha_{i}|\alpha{c},\sigma_{\alpha}^{2}) \\
+&\propto \exp^{\frac{-b_{\alpha}}{\sigma_{\alpha}^{2}}}(\sigma_{\alpha}^{2})^{-a_{\alpha}-1}\prod_{i=1}^{n_{i}} \exp\left(\frac{-(\alpha_{i}-\alpha_{c})^{2}}{2\sigma_{\alpha}^{2}}\right)(\sigma_{\alpha}^{2})^{-\frac{1}{2}}\\
+&\propto (\sigma_{\alpha}^{2})^{-a_{\alpha}-1-\frac{n_{i}}{2}}\exp\left(\frac{-2b_{\alpha}-\sum\limits_{i=1}^{n_{i}}(\alpha_{i}-\alpha_{c})^{2}}{2\sigma_{\alpha}^{2}}\right)\\
+&\sim InvGamma(\frac{n_{i}}{2}+a_{\alpha},\frac{+2b_{\alpha}+\sum\limits_{i=1}^{n_{i}}(\alpha_{i}-\alpha_{c})^{2}}{2})
+\end{align}\\
+
+
+
+$\frac{}{}$
+
