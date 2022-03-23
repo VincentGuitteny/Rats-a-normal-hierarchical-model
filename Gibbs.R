@@ -14,7 +14,7 @@ y = structure(c(151, 145, 147, 155, 135, 159, 141, 159, 177, 134,
                  286, 303, 295, 289, 258, 286, 320, 354, 328, 297, 323, 331, 305, 
                  338, 376, 296, 352, 314, 325, 358, 312, 324, 316, 317, 336, 321, 
                  334, 302, 302, 323, 331, 345, 333, 316, 291, 324), 
-              .Dim = c(L, C))
+              .Dim = c(ni, nj))
 
 colnames(y) = c("Jour 8", "Jour 15", "Jour 22", "Jour 29", "Jour 36")
 
@@ -39,53 +39,66 @@ Gibbs = function(nchain, data, prop_sd){
   init = c(alpha.c, beta.c, alpha.sigma, beta.sigma, sigma.c, alpha, beta)
   
   # Début de la chaîne
-  chain = matrix(NA, nchain +1, 7)
+  chain = matrix(NA, nchain +1, 65)
   chain[1,] = init
   for (i in 1:nchain){
     # Mise à jour de alpha.c
-    prop = rnorm(1, alpha.c, prop_sd[1])
-    
     mean = (prop_sd[1] * sum(alpha))/(alpha.sigma**2 + ni * prop_sd[1])
     sd = (prop_sd[1] * alpha.sigma**2)/(alpha.sigma**2 + ni * prop_sd[1])
     
-    top = dnorm(prop, mean, sd)
-    
-    bottom = dnorm(alpha.c, mean, sd)
-    
-    acc_prob = exp(top - bottom)
-    
-    if (runif(1) < acc_prob){
-      alpha.c = prop
-    }
+    alpha.c = rnorm(1, mean, sd)
     
     # Mise à jour de beta.c
-    prop = rnorm(1, beta.c, prop_sd[2])
-    
     mean = (prop_sd[2] * sum(alpha))/(beta.sigma**2 + ni * prop_sd[2])
     sd = (prop_sd[2] * beta.sigma**2)/(beta.sigma**2 + ni * prop_sd[2])
     
-    top = dnorm(prop, mean, sd)
-    
-    bottom = dnorm(beta.c, mean, sd)
-    
-    acc_prob = exp(top - bottom)
-    
-    if (runif(1) < acc_prob){
-      beta.c = prop
-    }
+    beta.c = rnorm(1, mean, sd)
     
     # Mise à jour de alpha.sigma
+    a = prop_sd[3] + ni / 2
+    b = (2 * prop_sd[4] + sum((alpha - alpha.c)**2))/2
+    
+    alpha.sigma = 1/rgamma(1, a, b)
     
     # Mise à jour de beta.sigma
-    
+    a = prop_sd[5] + ni / 2
+    b = (2 * prop_sd[6] + sum((alpha - alpha.c)**2))/2
+      
+    beta.sigma = 1/rgamma(1, a, b)
+      
     # Mise à jour de sigma.c
+    a = prop_sd[7] + ni * nj / 2
+    tot = 0
+    for (i in 1:ni){
+      for (j in 1:nj){
+        s = (data[i,j] - alpha[i] - beta[i]*(x[j] - xbar))**2
+        tot = tot + s
+      }
+    }
+    b = (2 * prop_sd[8] + tot)/2
+      
+    sigma.c = 1/rgamma(1, a, b)
     
     # Mise à jour de alpha
+    for (i in 1:ni){
+      mean = (alpha.c * sigma.c**2 + alpha.sigma**2 * sum(data[i,] - beta[i]*(x - xbar))) / (sigma.c**2 + nj * alpha.sigma**2)
+      sd = (alpha.sigma**2 * sigma.c**2) / (sigma.c**2 + nj * alpha.sigma**2)
+        
+      alpha[i] = rnorm(1, mean, sd)
+    }
     
     # Mise à jour de beta
-    
+    for (i in 1:ni){
+      mean = (beta.c * sigma.c**2 + beta.sigma**2 * sum((x - xbar) * (data[i,] - alpha[i]))) / (sigma.c**2 + sum((x - xbar)**2) * beta.sigma**2)
+      sd = (beta.sigma**2 * sigma.c**2) / (sigma.c**2 + sum((x - xbar)**2) * beta.sigma**2)
+      
+      beta[i] = rnorm(1, mean, sd)
+    }
     
     # Mise à jour de la chaîne
     chain[i+1,] = c(alpha.c, beta.c, alpha.sigma, beta.sigma, sigma.c, alpha, beta)
   }
 }
+
+chain = Gibbs(100, y, prop_sd = c(0.1, 0.1, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001))
+summary(chain)
