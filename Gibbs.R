@@ -39,18 +39,18 @@ Gibbs = function(nchain, data, prop_sd){
   init = c(alpha.c, beta.c, alpha.sigma, beta.sigma, sigma.c, alpha, beta)
   
   # Début de la chaîne
-  chain = matrix(NA, nchain +1, 65)
+  chain = matrix(NA, nchain + 1, 65)
   chain[1,] = init
-  for (i in 1:nchain){
+  for (k in 1:nchain){
     # Mise à jour de alpha.c
-    mean = (prop_sd[1] * sum(alpha))/(alpha.sigma**2 + ni * prop_sd[1])
-    sd = (prop_sd[1] * alpha.sigma**2)/(alpha.sigma**2 + ni * prop_sd[1])
+    mean = (prop_sd[1]**2 * sum(alpha))/(alpha.sigma**2 + ni * prop_sd[1]**2)
+    sd = (prop_sd[1]**2 * alpha.sigma**2)/(alpha.sigma**2 + ni * prop_sd[1]**2)
     
     alpha.c = rnorm(1, mean, sd)
     
     # Mise à jour de beta.c
-    mean = (prop_sd[2] * sum(alpha))/(beta.sigma**2 + ni * prop_sd[2])
-    sd = (prop_sd[2] * beta.sigma**2)/(beta.sigma**2 + ni * prop_sd[2])
+    mean = (prop_sd[2]**2 * sum(beta))/(beta.sigma**2 + ni * prop_sd[2]**2)
+    sd = (prop_sd[2]**2 * beta.sigma**2)/(beta.sigma**2 + ni * prop_sd[2]**2)
     
     beta.c = rnorm(1, mean, sd)
     
@@ -58,13 +58,13 @@ Gibbs = function(nchain, data, prop_sd){
     a = prop_sd[3] + ni / 2
     b = (2 * prop_sd[4] + sum((alpha - alpha.c)**2))/2
     
-    alpha.sigma = 1/rgamma(1, a, b)
+    alpha.sigma = 1/rgamma(1, a, 1/b)
     
     # Mise à jour de beta.sigma
     a = prop_sd[5] + ni / 2
-    b = (2 * prop_sd[6] + sum((alpha - alpha.c)**2))/2
+    b = (2 * prop_sd[6] + sum((beta - beta.c)**2))/2
       
-    beta.sigma = 1/rgamma(1, a, b)
+    beta.sigma = 1/rgamma(1, a, 1/b)
       
     # Mise à jour de sigma.c
     a = prop_sd[7] + ni * nj / 2
@@ -76,8 +76,8 @@ Gibbs = function(nchain, data, prop_sd){
       }
     }
     b = (2 * prop_sd[8] + tot)/2
-      
-    sigma.c = 1/rgamma(1, a, b)
+    
+    sigma.c = 1/rgamma(1, a, 1/b)
     
     # Mise à jour de alpha
     for (i in 1:ni){
@@ -96,9 +96,24 @@ Gibbs = function(nchain, data, prop_sd){
     }
     
     # Mise à jour de la chaîne
-    chain[i+1,] = c(alpha.c, beta.c, alpha.sigma, beta.sigma, sigma.c, alpha, beta)
+    chain[k+1,] = c(alpha.c, beta.c, alpha.sigma, beta.sigma, sigma.c, alpha, beta)
   }
+  return(chain)
 }
 
-chain = Gibbs(100, y, prop_sd = c(0.1, 0.1, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001))
+# 
+chain = Gibbs(10**4, y, prop_sd = c(1, 1, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001))
 summary(chain)
+
+library(coda)
+burnin = 1:1000
+plot(mcmc(chain[-burnin,])[,1:5])
+
+summary(mcmc(chain[-burnin,]))$statistics[1:5,]
+
+y2 = matrix(NA, ni, nj)
+for(i in 1:ni){
+  for (j in 1:nj){
+    y2[i,j] = rnorm(1, chain[10001,i+5] + chain[10001,i+35] * (x[j] - xbar), chain[10001,5]**2)
+  }
+}
