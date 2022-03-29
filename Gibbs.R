@@ -33,13 +33,15 @@ Gibbs = function(nchain, data, prop_sd){
   beta.sigma = 1
   sigma.c = sd(data)
   
+  alpha0 = alpha.c - xbar * beta.c
+  
   alpha = rep(mean(data[,1]), ni)
   beta = rep(mean(data[,2])/mean(data[,1]), ni)
   
-  init = c(alpha.c, beta.c, alpha.sigma, beta.sigma, sigma.c, alpha, beta)
+  init = c(alpha0, alpha.c, beta.c, alpha.sigma, beta.sigma, sigma.c, alpha, beta)
   
   # Début de la chaîne
-  chain = matrix(NA, nchain + 1, 65)
+  chain = matrix(NA, nchain + 1, 66)
   chain[1,] = init
   for (k in 1:nchain){
     # Mise à jour de alpha.c
@@ -95,8 +97,11 @@ Gibbs = function(nchain, data, prop_sd){
       beta[i] = rnorm(1, mean, sd)
     }
     
+    # Mise à jour de alpha0
+    alpha0 = alpha.c - xbar * beta.c
+    
     # Mise à jour de la chaîne
-    chain[k+1,] = c(alpha.c, beta.c, alpha.sigma, beta.sigma, sigma.c, alpha, beta)
+    chain[k+1,] = c(alpha0, alpha.c, beta.c, alpha.sigma, beta.sigma, sigma.c, alpha, beta)
   }
   return(chain)
 }
@@ -107,13 +112,14 @@ summary(chain)
 
 library(coda)
 burnin = 1:1000
-plot(mcmc(chain[-burnin,])[,1:5])
+plot(mcmc(chain[-burnin,])[,1:6])
 
-summary(mcmc(chain[-burnin,]))$statistics[1:5,]
+summary(mcmc(chain[-burnin,]))$statistics[1:6,]
+# On retrouve les mêmes moyennes pour alpha 0 et pour beta.c
 
 y2 = matrix(NA, ni, nj)
 for(i in 1:ni){
   for (j in 1:nj){
-    y2[i,j] = rnorm(1, chain[10001,i+5] + chain[10001,i+35] * (x[j] - xbar), chain[10001,5]**2)
+    y2[i,j] = rnorm(1, chain[10001,i+6] + chain[10001,i+36] * (x[j] - xbar), chain[10001,6]**2)
   }
 }
