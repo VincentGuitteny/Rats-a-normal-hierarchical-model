@@ -38,7 +38,7 @@ header-includes:
 \newpage
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_chunk$set(comment = "")
 knitr::opts_chunk$set(fig.align = "center")
 
@@ -171,34 +171,74 @@ for(i in 1:ni){
 
 ```
 
-# Introduction
-
 # Présentation du jeu de données
+
+Nous disposons des poids de 30 jeunes rats, mesurés chaque semaine pendant 5 semaines. La dimension de notre jeu de données est donc de 30 par 5. Nos variables $x_j,j=1,…,5$ correspondent aux différents âges des rats, en jour ($x_j = {8,15,22,29,36}$), et nos données $Y_{ij}$ correspondent au poids du rat $i$ à l’âge $x_j$.
+
+Un tracé des 30 courbes de croissance suggère des signes de courbure vers le bas :
+
+```{r}
+plot(y[1,],type='l',col=1, ylim = c(100,400))
+for (i in 2:ni){
+  lines(y[i,],type='l',col=i)
+}
+```
+
+# Présentation du modèle
+
+Le modèle est essentiellement une courbe de croissance linéaire à effets aléatoires :
+
+$Y_{ij}$ ~ $\mathcal N(\alpha_i + \beta_i(x_j - \bar x), \sigma_c ^2)$ où $\bar x = 22$ et $\sigma_c ^2$ ~ $InvGamma(a_c,b_c)$
+
+$\alpha_i$ ~ $\mathcal N(\alpha_c,\sigma_{\alpha}^2)$
+
+$\beta_i$ ~ $\mathcal N(\beta_c,\sigma_{\beta}^2)$
+
+On note l’absence de paramètre représentant la corrélation entre $\alpha_i$ et $\beta_i$. 
+Pour l’instant, nous standardisons les $x_j$ autour de leur moyenne pour réduire la dépendance entre $\alpha_i$ et $\beta_i$ dans leur vraisemblance : en fait, pour les données entièrement équilibrées (centrées et réduites), une indépendance complète est atteinte (notons qu’en général, l’indépendance a priori n’oblige pas les distributions a posteriori à être indépendantes).
+
+Les paramètres $\alpha_c, \sigma_{\alpha}^2, \beta_c, \sigma_{\beta}^2$ ont des loi a priori « non informatives » et indépendantes :
+
+$\alpha_c$ ~ $\mathcal N(0,\sigma_a^2)$
+
+$\sigma_{\alpha}^2$ ~ $InvGamma(a_{\alpha},b_{\alpha})$
+
+$\beta_c$ ~ $\mathcal N(0,\sigma_b^2)$
+
+$\sigma_{\beta}^2$ ~ $InvGamma(a_{\beta},b_{\beta})$.
+
+
+
+
+
+
+
+
+# Calculs des lois a posteriori
+
+## Exemple de calcul avec des lois gaussiennes
 
 $\alpha_{c} \sim \mathcal{N}(O,\,\sigma_{a}^{2})$ ; $\alpha_{i} \sim \mathcal{N}(\alpha_{c},\,\sigma_{\alpha}^{2})$
 
-\begin{align}
+\begin{align*}
 \Pi(\alpha_{c}|...) &\propto \Pi(\alpha_{c}) \prod_{i=1}^{n_{i}} \Pi(\alpha_{i}|\alpha_{c},\sigma_{\alpha}^{2} ) \\
         &\propto \exp\left(\frac{-\alpha_{c}^{2}}{2\sigma_{a}^{2}}\right)\prod_{i=1}^{n_{i}} \exp\left(\frac{-(\alpha_{i}-\alpha_{c})^{2}}{2\sigma_{\alpha}^{2}}\right) \\
         &\propto \exp\left(\frac{-\alpha_{c}^{2}}{2\sigma_{a}^{2}}\right)\prod_{i=1}^{n_{i}} \exp\left(\frac{-(\alpha_{c}^{2}-2\alpha_{i}\alpha_{c})}{2\sigma_{\alpha}^{2}}\right) \\
         &\propto \exp\left(\frac{-\alpha_{c}^{2}}{2\sigma_{a}^{2}}\right)\prod_{i=1}^{n_{i}} \exp\left(\frac{-ni\alpha_{c}^{2}+2\alpha_{c}\sum\limits_{i=1}^{n_{i}} \alpha_{i}}{2\sigma_{\alpha}^{2}}\right)\\
         &\propto \exp\left(\frac{-\alpha_{c}^{2}(\sigma_{\alpha}^{2}+ni\sigma_{a}^{2}) +2\alpha_{c}\sigma_{a}^{2}\sum\limits_{i=1}^{n_{i}} \alpha_{i}}{2\sigma_{a}^{2}\sigma_{\alpha}^{2}}\right)\\
         &\sim \mathcal{N}\left(\frac{\sigma_{a}^{2}\sum\limits_{i=1}^{n_{i}} \alpha_{i}}{\sigma_{\alpha}^{2}+n_{i}\sigma_{a}^{2}},\frac{\sigma_{a}^{2}\sigma_{\alpha}^{2}}{\sigma_{\alpha}^{2}+n_{i}\sigma_{a}^{2}}\right)
-\end{align}
+\end{align*}
 
 
-
+## Exemple de calcul avec des lois inverses gamma
 
 $\sigma_{\alpha}^{2} \sim InvGamma(a_{\alpha},b_{\alpha})$
 
-\begin{align}
+\begin{align*}
 \Pi(\sigma_{\alpha}^{2}|...) &\propto \Pi(\sigma_{\alpha}^{2}) \prod_{i=1}^{n_{i}}\Pi(\alpha_{i}|\alpha{c},\sigma_{\alpha}^{2}) \\
 &\propto \exp^{\frac{-b_{\alpha}}{\sigma_{\alpha}^{2}}}(\sigma_{\alpha}^{2})^{-a_{\alpha}-1}\prod_{i=1}^{n_{i}} \exp\left(\frac{-(\alpha_{i}-\alpha_{c})^{2}}{2\sigma_{\alpha}^{2}}\right)(\sigma_{\alpha}^{2})^{-\frac{1}{2}}\\
 &\propto (\sigma_{\alpha}^{2})^{-a_{\alpha}-1-\frac{n_{i}}{2}}\exp\left(\frac{-2b_{\alpha}-\sum\limits_{i=1}^{n_{i}}(\alpha_{i}-\alpha_{c})^{2}}{2\sigma_{\alpha}^{2}}\right)\\
 &\sim InvGamma(\frac{n_{i}}{2}+a_{\alpha},\frac{+2b_{\alpha}+\sum\limits_{i=1}^{n_{i}}(\alpha_{i}-\alpha_{c})^{2}}{2})
-\end{align}\\
+\end{align*}
 
-
-
-$\frac{}{}$
-
+# Annexes
