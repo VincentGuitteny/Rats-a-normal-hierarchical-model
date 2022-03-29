@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2022.1.3)  29 MAR 2022 15:34
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2022.1.3)  29 MAR 2022 17:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -495,22 +495,23 @@ LaTeX Font Info:    Trying to load font information for U+stmry on input line 7
 (/usr/local/texlive/2021/texmf-dist/tex/latex/stmaryrd/Ustmry.fd) [1
 
 {/usr/local/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./Rats
----A-normal-hierarchical-model.toc)
+---A-normal-hierarchical-model.toc
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 4.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 4.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 4.
+)
 \tf@toc=\write3
 \openout3 = `Rats---A-normal-hierarchical-model.toc'.
 
 [2]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 100.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 100.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 100.
 
 LaTeX Warning: Command \textellipsis invalid in math mode on input line 100.
 
 <Rats---A-normal-hierarchical-model_files/figure-latex/unnamed-chunk-1-1.pdf, i
-d=25, 404.51125pt x 215.80624pt>
+d=46, 404.51125pt x 215.80624pt>
 File: Rats---A-normal-hierarchical-model_files/figure-latex/unnamed-chunk-1-1.p
 df Graphic file (type pdf)
 <use Rats---A-normal-hierarchical-model_files/figure-latex/unnamed-chunk-1-1.pd
@@ -518,39 +519,46 @@ f>
 Package pdftex.def Info: Rats---A-normal-hierarchical-model_files/figure-latex/
 unnamed-chunk-1-1.pdf  used on input line 107.
 (pdftex.def)             Requested size: 404.51642pt x 215.80899pt.
-[3 <./Rats---A-normal-hierarchical-model_files/figure-latex/unnamed-chunk-1-1.p
-df>] [4] (./Rats---A-normal-hierarchical-model.aux) ) 
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
+48.
+(/usr/local/texlive/2021/texmf-dist/tex/latex/lm/t1lmtt.fd
+File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+) [3 <./Rats---A-normal-hierarchical-model_files/figure-latex/unnamed-chunk-1-1
+.pdf>] [4] [5] [6] [7] [8] (./Rats---A-normal-hierarchical-model.aux) ) 
 Here is how much of TeX's memory you used:
- 12722 strings out of 478994
- 188964 string characters out of 5858185
- 531727 words of memory out of 5000000
- 29911 multiletter control sequences out of 15000+600000
- 449327 words of font info for 98 fonts, out of 8000000 for 9000
+ 12821 strings out of 478994
+ 190811 string characters out of 5858185
+ 539630 words of memory out of 5000000
+ 29971 multiletter control sequences out of 15000+600000
+ 453336 words of font info for 108 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 85i,11n,88p,539b,348s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2021/t
-exmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2021/texmf-dist/
-fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2021/texmf-dist/fonts/enc/dvip
-s/lm/lm-mathex.enc}{/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/lm/lm-ma
-thit.enc}{/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}</usr
-/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/tex
-live/2021/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2021/
-texmf-dist/fonts/type1/public/lm/lmex10.pfb></usr/local/texlive/2021/texmf-dist
-/fonts/type1/public/lm/lmmi10.pfb></usr/local/texlive/2021/texmf-dist/fonts/typ
-e1/public/lm/lmmi5.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/l
-m/lmmi7.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmr10.pfb
-></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/loca
-l/texlive/2021/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/2
-021/texmf-dist/fonts/type1/public/lm/lmr5.pfb></usr/local/texlive/2021/texmf-di
-st/fonts/type1/public/lm/lmr7.pfb></usr/local/texlive/2021/texmf-dist/fonts/typ
-e1/public/lm/lmsy10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/
-lm/lmsy5.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmsy7.pf
-b>
-Output written on Rats---A-normal-hierarchical-model.pdf (4 pages, 208199 bytes
+ 85i,11n,88p,781b,348s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/lo
+cal/texlive/2021/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/20
+21/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/2021/texmf-d
+ist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2021/texmf-dist/fonts/
+enc/dvips/lm/lm-mathex.enc}{/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/
+lm/lm-ec.enc}</usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmbx10.p
+fb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/l
+ocal/texlive/2021/texmf-dist/fonts/type1/public/lm/lmex10.pfb></usr/local/texli
+ve/2021/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/local/texlive/2021/te
+xmf-dist/fonts/type1/public/lm/lmmi12.pfb></usr/local/texlive/2021/texmf-dist/f
+onts/type1/public/lm/lmmi5.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/
+public/lm/lmmi7.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/l
+mmi8.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmr10.pfb></
+usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/t
+exlive/2021/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/2021
+/texmf-dist/fonts/type1/public/lm/lmr5.pfb></usr/local/texlive/2021/texmf-dist/
+fonts/type1/public/lm/lmr7.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/
+public/lm/lmr8.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lm
+sy10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmsy5.pfb></
+usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></usr/local/t
+exlive/2021/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
+Output written on Rats---A-normal-hierarchical-model.pdf (8 pages, 272690 bytes
 ).
 PDF statistics:
- 123 PDF objects out of 1000 (max. 8388607)
- 99 compressed objects within 1 object stream
- 16 named destinations out of 1000 (max. 500000)
- 24606 words of extra memory for PDF output out of 24883 (max. 10000000)
+ 211 PDF objects out of 1000 (max. 8388607)
+ 178 compressed objects within 2 object streams
+ 34 named destinations out of 1000 (max. 500000)
+ 26726 words of extra memory for PDF output out of 29859 (max. 10000000)
 
