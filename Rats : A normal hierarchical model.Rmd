@@ -1,0 +1,204 @@
+---
+title: 'Rats : A normal hierarchical model'
+author: "Vincent Guitteny, Freddie Joly, Tom Léchappé et Elyes Zribi"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  pdf_document:
+    fig_caption: yes
+    fig_width: 6
+    fig_height: 4
+    number_sections: true
+    keep_tex: true
+  html_document:
+    df_print: paged
+header-includes: 
+  \usepackage{stmaryrd}
+  \usepackage{float} 
+  \floatplacement{figure}{H}
+---
+
+\newenvironment{cols}[1][]{}{}
+\newenvironment{col}[1]{\begin{minipage}{#1}\ignorespaces}{%
+\end{minipage}
+\ifhmode\unskip\fi
+\aftergroup\useignorespacesandallpars}
+\def\useignorespacesandallpars#1\ignorespaces\fi{%
+#1\fi\ignorespacesandallpars}
+\makeatletter
+\def\ignorespacesandallpars{%
+  \@ifnextchar\par
+    {\expandafter\ignorespacesandallpars\@gobble}%
+    {}%
+}
+\makeatother
+
+\renewcommand\contentsname{Table des matières}
+\newpage
+\tableofcontents
+\newpage
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(comment = "")
+knitr::opts_chunk$set(fig.align = "center")
+
+library(coda)
+
+# Data
+ni = 30 # nombres de lignes (rats)
+nj = 5 # nombres de colonnes (jours)
+
+y = structure(c(151, 145, 147, 155, 135, 159, 141, 159, 177, 134, 
+                 160, 143, 154, 171, 163, 160, 142, 156, 157, 152, 154, 139, 146, 
+                 157, 132, 160, 169, 157, 137, 153, 199, 199, 214, 200, 188, 210, 
+                 189, 201, 236, 182, 208, 188, 200, 221, 216, 207, 187, 203, 212, 
+                 203, 205, 190, 191, 211, 185, 207, 216, 205, 180, 200, 246, 249, 
+                 263, 237, 230, 252, 231, 248, 285, 220, 261, 220, 244, 270, 242, 
+                 248, 234, 243, 259, 246, 253, 225, 229, 250, 237, 257, 261, 248, 
+                 219, 244, 283, 293, 312, 272, 280, 298, 275, 297, 350, 260, 313, 
+                 273, 289, 326, 281, 288, 280, 283, 307, 286, 298, 267, 272, 285, 
+                 286, 303, 295, 289, 258, 286, 320, 354, 328, 297, 323, 331, 305, 
+                 338, 376, 296, 352, 314, 325, 358, 312, 324, 316, 317, 336, 321, 
+                 334, 302, 302, 323, 331, 345, 333, 316, 291, 324), 
+              .Dim = c(ni, nj))
+
+colnames(y) = c("Jour 8", "Jour 15", "Jour 22", "Jour 29", "Jour 36")
+
+x = c(8.0, 15.0, 22.0, 29.0, 36.0)
+xbar = 22.0
+
+Gibbs = function(nchain, data, prop_sd){
+  
+  x = c(8.0, 15.0, 22.0, 29.0, 36.0)
+  xbar = 22.0
+  
+  # État initial
+  alpha.c = data[1,1]
+  beta.c = 0
+  alpha.sigma = sd(data[,1])
+  beta.sigma = 1
+  sigma.c = sd(data)
+  
+  alpha0 = alpha.c - xbar * beta.c
+  
+  alpha = rep(mean(data[,1]), ni)
+  beta = rep(mean(data[,2])/mean(data[,1]), ni)
+  
+  init = c(alpha0, alpha.c, beta.c, alpha.sigma, beta.sigma, sigma.c, alpha, beta)
+  
+  # Début de la chaîne
+  chain = matrix(NA, nchain + 1, 66)
+  chain[1,] = init
+  for (k in 1:nchain){
+    # Mise à jour de alpha.c
+    mean = (prop_sd[1]**2 * sum(alpha))/(alpha.sigma**2 + ni * prop_sd[1]**2)
+    sd = (prop_sd[1]**2 * alpha.sigma**2)/(alpha.sigma**2 + ni * prop_sd[1]**2)
+    
+    alpha.c = rnorm(1, mean, sd)
+    
+    # Mise à jour de beta.c
+    mean = (prop_sd[2]**2 * sum(beta))/(beta.sigma**2 + ni * prop_sd[2]**2)
+    sd = (prop_sd[2]**2 * beta.sigma**2)/(beta.sigma**2 + ni * prop_sd[2]**2)
+    
+    beta.c = rnorm(1, mean, sd)
+    
+    # Mise à jour de alpha.sigma
+    a = prop_sd[3] + ni / 2
+    b = (2 * prop_sd[4] + sum((alpha - alpha.c)**2))/2
+    
+    alpha.sigma = 1/rgamma(1, a, 1/b)
+    
+    # Mise à jour de beta.sigma
+    a = prop_sd[5] + ni / 2
+    b = (2 * prop_sd[6] + sum((beta - beta.c)**2))/2
+      
+    beta.sigma = 1/rgamma(1, a, 1/b)
+      
+    # Mise à jour de sigma.c
+    a = prop_sd[7] + ni * nj / 2
+    tot = 0
+    for (i in 1:ni){
+      for (j in 1:nj){
+        s = (data[i,j] - alpha[i] - beta[i]*(x[j] - xbar))**2
+        tot = tot + s
+      }
+    }
+    b = (2 * prop_sd[8] + tot)/2
+    
+    sigma.c = 1/rgamma(1, a, 1/b)
+    
+    # Mise à jour de alpha
+    for (i in 1:ni){
+      mean = (alpha.c * sigma.c**2 + alpha.sigma**2 * sum(data[i,] - beta[i]*(x - xbar))) / (sigma.c**2 + nj * alpha.sigma**2)
+      sd = (alpha.sigma**2 * sigma.c**2) / (sigma.c**2 + nj * alpha.sigma**2)
+        
+      alpha[i] = rnorm(1, mean, sd)
+    }
+    
+    # Mise à jour de beta
+    for (i in 1:ni){
+      mean = (beta.c * sigma.c**2 + beta.sigma**2 * sum((x - xbar) * (data[i,] - alpha[i]))) / (sigma.c**2 + sum((x - xbar)**2) * beta.sigma**2)
+      sd = (beta.sigma**2 * sigma.c**2) / (sigma.c**2 + sum((x - xbar)**2) * beta.sigma**2)
+      
+      beta[i] = rnorm(1, mean, sd)
+    }
+    
+    # Mise à jour de alpha0
+    alpha0 = alpha.c - xbar * beta.c
+    
+    # Mise à jour de la chaîne
+    chain[k+1,] = c(alpha0, alpha.c, beta.c, alpha.sigma, beta.sigma, sigma.c, alpha, beta)
+  }
+  return(chain)
+}
+
+# 
+chain = Gibbs(10**4, y, prop_sd = c(1, 1, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001))
+summary = summary(chain)
+
+burnin = 1:1000
+# plot(mcmc(chain[-burnin,])[,1:6])
+
+summary2 = summary(mcmc(chain[-burnin,]))$statistics[1:6,]
+# On retrouve les mêmes moyennes pour alpha 0 et pour beta.c
+
+y2 = matrix(NA, ni, nj)
+for(i in 1:ni){
+  for (j in 1:nj){
+    y2[i,j] = rnorm(1, chain[10001,i+6] + chain[10001,i+36] * (x[j] - xbar), chain[10001,6]**2)
+  }
+}
+
+```
+
+# Introduction
+
+# Présentation du jeu de données
+
+$\alpha_{c} \sim \mathcal{N}(O,\,\sigma_{a}^{2})$ ; $\alpha_{i} \sim \mathcal{N}(\alpha_{c},\,\sigma_{\alpha}^{2})$
+
+\begin{align}
+\Pi(\alpha_{c}|...) &\propto \Pi(\alpha_{c}) \prod_{i=1}^{n_{i}} \Pi(\alpha_{i}|\alpha_{c},\sigma_{\alpha}^{2} ) \\
+        &\propto \exp\left(\frac{-\alpha_{c}^{2}}{2\sigma_{a}^{2}}\right)\prod_{i=1}^{n_{i}} \exp\left(\frac{-(\alpha_{i}-\alpha_{c})^{2}}{2\sigma_{\alpha}^{2}}\right) \\
+        &\propto \exp\left(\frac{-\alpha_{c}^{2}}{2\sigma_{a}^{2}}\right)\prod_{i=1}^{n_{i}} \exp\left(\frac{-(\alpha_{c}^{2}-2\alpha_{i}\alpha_{c})}{2\sigma_{\alpha}^{2}}\right) \\
+        &\propto \exp\left(\frac{-\alpha_{c}^{2}}{2\sigma_{a}^{2}}\right)\prod_{i=1}^{n_{i}} \exp\left(\frac{-ni\alpha_{c}^{2}+2\alpha_{c}\sum\limits_{i=1}^{n_{i}} \alpha_{i}}{2\sigma_{\alpha}^{2}}\right)\\
+        &\propto \exp\left(\frac{-\alpha_{c}^{2}(\sigma_{\alpha}^{2}+ni\sigma_{a}^{2}) +2\alpha_{c}\sigma_{a}^{2}\sum\limits_{i=1}^{n_{i}} \alpha_{i}}{2\sigma_{a}^{2}\sigma_{\alpha}^{2}}\right)\\
+        &\sim \mathcal{N}\left(\frac{\sigma_{a}^{2}\sum\limits_{i=1}^{n_{i}} \alpha_{i}}{\sigma_{\alpha}^{2}+n_{i}\sigma_{a}^{2}},\frac{\sigma_{a}^{2}\sigma_{\alpha}^{2}}{\sigma_{\alpha}^{2}+n_{i}\sigma_{a}^{2}}\right)
+\end{align}
+
+
+
+
+$\sigma_{\alpha}^{2} \sim InvGamma(a_{\alpha},b_{\alpha})$
+
+\begin{align}
+\Pi(\sigma_{\alpha}^{2}|...) &\propto \Pi(\sigma_{\alpha}^{2}) \prod_{i=1}^{n_{i}}\Pi(\alpha_{i}|\alpha{c},\sigma_{\alpha}^{2}) \\
+&\propto \exp^{\frac{-b_{\alpha}}{\sigma_{\alpha}^{2}}}(\sigma_{\alpha}^{2})^{-a_{\alpha}-1}\prod_{i=1}^{n_{i}} \exp\left(\frac{-(\alpha_{i}-\alpha_{c})^{2}}{2\sigma_{\alpha}^{2}}\right)(\sigma_{\alpha}^{2})^{-\frac{1}{2}}\\
+&\propto (\sigma_{\alpha}^{2})^{-a_{\alpha}-1-\frac{n_{i}}{2}}\exp\left(\frac{-2b_{\alpha}-\sum\limits_{i=1}^{n_{i}}(\alpha_{i}-\alpha_{c})^{2}}{2\sigma_{\alpha}^{2}}\right)\\
+&\sim InvGamma(\frac{n_{i}}{2}+a_{\alpha},\frac{+2b_{\alpha}+\sum\limits_{i=1}^{n_{i}}(\alpha_{i}-\alpha_{c})^{2}}{2})
+\end{align}\\
+
+
+
+$\frac{}{}$
+
