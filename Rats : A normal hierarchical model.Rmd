@@ -207,6 +207,8 @@ $\beta_c \sim \mathcal N(0,\sigma_b^2)$
 
 $\sigma_{\beta}^2 \sim InvGamma(a_{\beta},b_{\beta})$.
 
+
+
 # Calculs des lois conditionnelles pleines
 
 Afin de mettre en oeuvre un algorithme MCMC (Monte Carlo Markov Chain), à l'aide de la fonction `mcmc` du package `coda`, sur une chaîne de Markov obtenue par un échantilloneur de Gibbs, nous avons eu la nécessité de calculer les lois conditionnelles pleines (loi conditionnellement aux autres paramètres) des paramètres $\alpha_c$, $\beta_c$, $\sigma_{\alpha}^2$, $\sigma_{\beta}^2$, $\sigma_c ^2$, $\alpha_i$ et $\beta_i$ (et de voir si celles-ci étaient identifiables). Les paramètres $\alpha_c$, $\beta_c$, $\alpha_i$ et $\beta_i$ ont des lois a priori gaussiennes et les paramètres $\sigma_{\alpha}^2$, $\sigma_{\beta}^2$ et $\sigma_c ^2$ ont des lois a priori inverses gamma. Nous donnons ci-dessous un exemple de calcul pour une loi gaussienne et un exemple pour une loi inverse gamma (le reste des démonstrations se trouve en annexe).
