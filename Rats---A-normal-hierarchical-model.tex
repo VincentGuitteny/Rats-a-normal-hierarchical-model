@@ -6,7 +6,7 @@
 ]{article}
 \title{Rats : A normal hierarchical model}
 \author{Vincent Guitteny, Freddie Joly, Tom Léchappé et Elyes Zribi}
-\date{29 mars 2022}
+\date{30 mars 2022}
 
 \usepackage{amsmath,amssymb}
 \usepackage{lmodern}
@@ -140,6 +140,14 @@ priori « non informatives » et indépendantes :
 
 \(\sigma_{\beta}^2 \sim InvGamma(a_{\beta},b_{\beta})\).
 
+L'utilisation d'un tel modèle hiérarchique dans ce cas peut s'expliquer
+par le fait que le poids d'un rat dépend de plusieurs facteurs. En effet
+on peut imaginer que le poids du rat varie en fonction du rat lui-même
+(par exemple en fonction de son sexe), en fonction de son alimentation
+ou encore en fonction de son environnement. Plus de détails sur
+l'expérience aurait pu nous indiquer les informations exactes pour ce
+modèle hiérarchique.
+
 \hypertarget{calculs-des-lois-conditionnelles-pleines}{%
 \section{Calculs des lois conditionnelles
 pleines}\label{calculs-des-lois-conditionnelles-pleines}}
@@ -202,6 +210,10 @@ Maintenant que nous avons obtenues et identifiées toutes nos lois
 conditionnelles pleines de nos paramètres, nous avons pu implémenter un
 échantilloneur de Gibbs et utiliser un algorithme MCMC sur la chaîne de
 Markov obtenue par cet échantilloneur.
+
+Afin de comparer nos résultats avec ceux de l'expérience, nous avons
+utilisé un ``burnin'' de 1000 sur la chaîne de Markov qui est retourné
+par notre fonction simulant un échantilloneur de Gibbs.
 
 \newpage
 
