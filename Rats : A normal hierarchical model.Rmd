@@ -65,7 +65,7 @@ colnames(y) = c("Jour 8", "Jour 15", "Jour 22", "Jour 29", "Jour 36")
 x = c(8.0, 15.0, 22.0, 29.0, 36.0)
 xbar = 22.0
 
-Gibbs = function(nchain, data, prop_sd){
+Gibbs = function(nchain, data){
   
   ni = nrow(data)
   nj = ncol(data)
@@ -93,31 +93,31 @@ Gibbs = function(nchain, data, prop_sd){
   chain[1,] = init
   for (k in 1:nchain){
     # Mise à jour de alpha.c
-    mean = (prop_sd[1]**2 * sum(alpha))/(alpha.sigma**2 + ni * prop_sd[1]**2)
-    sd = (prop_sd[1]**2 * alpha.sigma**2)/(alpha.sigma**2 + ni * prop_sd[1]**2)
+    mean = (1000**2 * sum(alpha))/(alpha.sigma**2 + ni * 1000**2)
+    sd = (1000**2 * alpha.sigma**2)/(alpha.sigma**2 + ni * 1000**2)
     
     alpha.c = rnorm(1, mean, sd)
     
     # Mise à jour de beta.c
-    mean = (prop_sd[2]**2 * sum(beta))/(beta.sigma**2 + ni * prop_sd[2]**2)
-    sd = (prop_sd[2]**2 * beta.sigma**2)/(beta.sigma**2 + ni * prop_sd[2]**2)
+    mean = (1000**2 * sum(beta))/(beta.sigma**2 + ni * 1000**2)
+    sd = (1000**2 * beta.sigma**2)/(beta.sigma**2 + ni * 1000**2)
     
     beta.c = rnorm(1, mean, sd)
     
     # Mise à jour de alpha.sigma
-    a = prop_sd[3] + ni / 2
-    b = (2 * prop_sd[4] + sum((alpha - alpha.c)**2))/2
+    a = 0.001 + ni / 2
+    b = (2 * 0.001 + sum((alpha - alpha.c)**2))/2
     
-    alpha.sigma = 1/rgamma(1, a, 1/b)
+    alpha.sigma = 1/sqrt(rgamma(1, a, 1/b))
     
     # Mise à jour de beta.sigma
-    a = prop_sd[5] + ni / 2
-    b = (2 * prop_sd[6] + sum((beta - beta.c)**2))/2
+    a = 0.001 + ni / 2
+    b = (2 * 0.001 + sum((beta - beta.c)**2))/2
       
-    beta.sigma = 1/rgamma(1, a, 1/b)
+    beta.sigma = 1/sqrt(rgamma(1, a, 1/b))
       
     # Mise à jour de sigma.c
-    a = prop_sd[7] + ni * nj / 2
+    a = 0.001 + ni * nj / 2
     tot = 0
     for (i in 1:ni){
       for (j in 1:nj){
@@ -125,13 +125,14 @@ Gibbs = function(nchain, data, prop_sd){
         tot = tot + s
       }
     }
-    b = (2 * prop_sd[8] + tot)/2
+    b = (2 * 0.001 + tot)/2
     
-    sigma.c = 1/rgamma(1, a, 1/b)
+    sigma.c = 1/sqrt(rgamma(1, a, 1/b))
     
     # Mise à jour de alpha
     for (i in 1:ni){
-      mean = (alpha.c * sigma.c**2 + alpha.sigma**2 * sum(data[i,] - beta[i]*(x - xbar))) / (sigma.c**2 + nj * alpha.sigma**2)
+      mean = (alpha.c * sigma.c**2 + alpha.sigma**2 * sum(data[i,] - beta[i]*(x - xbar))) / 
+        (sigma.c**2 + nj * alpha.sigma**2)
       sd = (alpha.sigma**2 * sigma.c**2) / (sigma.c**2 + nj * alpha.sigma**2)
         
       alpha[i] = rnorm(1, mean, sd)
@@ -139,7 +140,8 @@ Gibbs = function(nchain, data, prop_sd){
     
     # Mise à jour de beta
     for (i in 1:ni){
-      mean = (beta.c * sigma.c**2 + beta.sigma**2 * sum((x - xbar) * (data[i,] - alpha[i]))) / (sigma.c**2 + sum((x - xbar)**2) * beta.sigma**2)
+      mean = (beta.c * sigma.c**2 + beta.sigma**2 * sum((x - xbar) * (data[i,] - alpha[i]))) / 
+        (sigma.c**2 + sum((x - xbar)**2) * beta.sigma**2)
       sd = (beta.sigma**2 * sigma.c**2) / (sigma.c**2 + sum((x - xbar)**2) * beta.sigma**2)
       
       beta[i] = rnorm(1, mean, sd)
@@ -155,14 +157,13 @@ Gibbs = function(nchain, data, prop_sd){
 }
 
 # 
-chain = Gibbs(10**4, y, prop_sd = c(1, 1, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001))
-summary = summary(chain)
+chain = Gibbs(10**4, y)
 
+library(coda)
 burnin = 1:1000
-# plot(mcmc(chain[-burnin,])[,1:6])
+plot(mcmc(chain[-burnin,])[,c(1,3,6)])
 
-summary2 = summary(mcmc(chain[-burnin,]))$statistics[1:6,]
-# On retrouve les mêmes moyennes pour alpha 0 et pour beta.c
+s = summary(mcmc(chain[-burnin,]))$statistics[c(1,3,6),]
 
 y2 = matrix(NA, ni, nj)
 for(i in 1:ni){
