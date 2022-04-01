@@ -6,7 +6,7 @@
 ]{article}
 \title{Rats : A normal hierarchical model}
 \author{Vincent Guitteny, Freddie Joly, Tom Léchappé et Elyes Zribi}
-\date{30 mars 2022}
+\date{01 avril 2022}
 
 \usepackage{amsmath,amssymb}
 \usepackage{lmodern}
@@ -46,6 +46,16 @@
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
 \usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
 \usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -146,7 +156,13 @@ on peut imaginer que le poids du rat varie en fonction du rat lui-même
 (par exemple en fonction de son sexe), en fonction de son alimentation
 ou encore en fonction de son environnement. Plus de détails sur
 l'expérience aurait pu nous indiquer les informations exactes pour ce
-modèle hiérarchique.
+modèle hiérarchique. Ci-dessous le modèle obtenu sous forme de graphes.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth,height=\textheight]{Model.jpg}
+\caption{Modèle hierarchique}
+\end{figure}
 
 \hypertarget{calculs-des-lois-conditionnelles-pleines}{%
 \section{Calculs des lois conditionnelles
@@ -182,7 +198,12 @@ de \(\alpha_{c} \sim \mathcal{N}(O,\,\sigma_{a}^{2})\) et de la loi de
         &\propto \exp\left(\frac{-\alpha_{c}^{2}}{2\sigma_{a}^{2}}\right)\prod_{i=1}^{n_{i}} \exp\left(\frac{-(\alpha_{c}^{2}-2\alpha_{i}\alpha_{c})}{2\sigma_{\alpha}^{2}}\right) \\
         &\propto \exp\left(\frac{-\alpha_{c}^{2}}{2\sigma_{a}^{2}}\right) \exp\left(\frac{-n_i\alpha_{c}^{2}+2\alpha_{c}\sum\limits_{i=1}^{n_{i}} \alpha_{i}}{2\sigma_{\alpha}^{2}}\right)\\
         &\propto \exp\left(\frac{-\alpha_{c}^{2}(\sigma_{\alpha}^{2}+n_i\sigma_{a}^{2}) +2\alpha_{c}\sigma_{a}^{2}\sum\limits_{i=1}^{n_{i}} \alpha_{i}}{2\sigma_{a}^{2}\sigma_{\alpha}^{2}}\right)\\
-        &\sim \mathcal{N}\left(\frac{\sigma_{a}^{2}\sum\limits_{i=1}^{n_{i}} \alpha_{i}}{\sigma_{\alpha}^{2}+n_{i}\sigma_{a}^{2}},\frac{\sigma_{a}^{2}\sigma_{\alpha}^{2}}{\sigma_{\alpha}^{2}+n_{i}\sigma_{a}^{2}}\right)
+\end{align*}
+
+Ainsi, on identifie une loi gaussienne :
+
+\begin{align*}
+\Pi(\alpha_{c}|...)    &\sim \mathcal{N}\left(\frac{\sigma_{a}^{2}\sum\limits_{i=1}^{n_{i}} \alpha_{i}}{\sigma_{\alpha}^{2}+n_{i}\sigma_{a}^{2}},\frac{\sigma_{a}^{2}\sigma_{\alpha}^{2}}{\sigma_{\alpha}^{2}+n_{i}\sigma_{a}^{2}}\right)
 \end{align*}
 
 \hypertarget{exemple-de-calcul-avec-des-lois-inverses-gamma}{%
@@ -199,7 +220,12 @@ loi de
 \Pi(\sigma_{\alpha}^{2}|...) &\propto \Pi(\sigma_{\alpha}^{2}) \prod_{i=1}^{n_{i}}\Pi(\alpha_{i}|\alpha_{c},\sigma_{\alpha}^{2}) \\
 &\propto \exp^{\frac{-b_{\alpha}}{\sigma_{\alpha}^{2}}}(\sigma_{\alpha}^{2})^{-a_{\alpha}-1}\prod_{i=1}^{n_{i}} \exp\left(\frac{-(\alpha_{i}-\alpha_{c})^{2}}{2\sigma_{\alpha}^{2}}\right)(\sigma_{\alpha}^{2})^{-\frac{1}{2}}\\
 &\propto (\sigma_{\alpha}^{2})^{-a_{\alpha}-1-\frac{n_{i}}{2}}\exp\left(\frac{-2b_{\alpha}-\sum\limits_{i=1}^{n_{i}}(\alpha_{i}-\alpha_{c})^{2}}{2\sigma_{\alpha}^{2}}\right)\\
-&\sim InvGamma(\frac{n_{i}}{2}+a_{\alpha},\frac{2b_{\alpha}+\sum\limits_{i=1}^{n_{i}}(\alpha_{i}-\alpha_{c})^{2}}{2})
+\end{align*}
+
+Ainsi, on identifie une loi inverse gamma :
+
+\begin{align*}
+\Pi(\sigma_{\alpha}^{2}|...) &\sim InvGamma(\frac{n_{i}}{2}+a_{\alpha},\frac{2b_{\alpha}+\sum\limits_{i=1}^{n_{i}}(\alpha_{i}-\alpha_{c})^{2}}{2})
 \end{align*}
 
 \hypertarget{impluxe9mentation-et-ruxe9sultats}{%
@@ -212,8 +238,52 @@ conditionnelles pleines de nos paramètres, nous avons pu implémenter un
 Markov obtenue par cet échantilloneur.
 
 Afin de comparer nos résultats avec ceux de l'expérience, nous avons
-utilisé un ``burnin'' de 1000 sur la chaîne de Markov qui est retourné
-par notre fonction simulant un échantilloneur de Gibbs.
+utilisé un ``burnin'' de 1000 sur la chaîne de Markov de taille totale
+10 000 qui est retourné par notre fonction simulant un échantilloneur de
+Gibbs.
+
+On observe que l'on retrouve la même moyenne que ceux obtenus par les
+auteurs pour les paramètres \(\alpha_0\) (défini par
+\(\alpha_0 = \alpha_c - \bar{x}\beta_c\)) et \(\beta_c\) dont on donne
+les valeurs dans le tableau ci-dessous.
+
+\begin{longtable}[]{@{}cc@{}}
+\toprule
+& Moyenne \\
+\midrule
+\endhead
+\(\alpha_0\) & 106.568 \\
+\(\beta_c\) & 6.186 \\
+\(\sigma_c^2\) & 0.003 \\
+\bottomrule
+\end{longtable}
+
+\begin{center}
+Table 1 : Moyenne des paramètres $\alpha_0$, $\beta_c$ et $\sigma_c^2$.
+\end{center}
+
+Enfin, nous avons voulu comparer nos résultats en faisant une prédiction
+du poids du rat 26 et en comparant nos résultats avec ceux du jeu de
+données initial.
+
+\begin{longtable}[]{@{}ccc@{}}
+\toprule
+& Valeurs prédites & Valeurs réelles \\
+\midrule
+\endhead
+Semaine 2 & 207 & 207 \\
+Semaine 3 & 254 & 257 \\
+Semaine 4 & 300 & 303 \\
+Semaine 5 & 347 & 345 \\
+\bottomrule
+\end{longtable}
+
+\begin{center}
+Table 2 : Valeurs prédites et réelles du poids du rat 26.
+\end{center}
+
+On retrouve bien dans ce tableau que nos valeurs prédites sont très
+proches des valeurs réelles pour les différents poids de ce rat.
 
 \newpage
 
