@@ -122,6 +122,7 @@ s = summary(mcmc(chain[-burnin,]))$statistics[c(1,3,6),]
 y2 = matrix(NA, ni, nj)
 for(i in 1:ni){
   for (j in 1:nj){
-    y2[i,j] = rnorm(1, chain[10001,i+6] + chain[10001,i+36] * (x[j] - xbar), chain[10001,6]**2)
+    y2[i,j] = rnorm(1, mean(chain[,i+6]) + mean(chain[,i+36]) * (x[j] - xbar), 
+                    mean(chain[,6])**2)
   }
 }
