@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2022.1.3)  1 APR 2022 16:34
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2022.1.3)  1 APR 2022 16:40
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -628,11 +628,11 @@ st/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2021/texmf-dist/fonts/t
 ype1/public/lm/lmsy5.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public
 /lm/lmsy7.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/lm/lmtt10.
 pfb>
-Output written on Rats---A-normal-hierarchical-model.pdf (9 pages, 307546 bytes
+Output written on Rats---A-normal-hierarchical-model.pdf (9 pages, 308232 bytes
 ).
 PDF statistics:
- 222 PDF objects out of 1000 (max. 8388607)
- 187 compressed objects within 2 object streams
+ 224 PDF objects out of 1000 (max. 8388607)
+ 189 compressed objects within 2 object streams
  38 named destinations out of 1000 (max. 500000)
  26731 words of extra memory for PDF output out of 29859 (max. 10000000)
 
