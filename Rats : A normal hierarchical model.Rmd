@@ -210,7 +210,7 @@ $\beta_c \sim \mathcal N(0,\sigma_b^2)$
 
 $\sigma_{\beta}^2 \sim InvGamma(a_{\beta},b_{\beta})$.
 
-L'utilisation d'un tel modèle hiérarchique dans ce cas peut s'expliquer par le fait que le poids d'un rat dépend de plusieurs facteurs. En effet on peut imaginer que le poids du rat varie en fonction du rat lui-même (par exemple en fonction de son sexe), en fonction de son alimentation ou encore en fonction de son environnement. Plus de détails sur l'expérience aurait pu nous indiquer les informations exactes pour ce modèle hiérarchique. Ci-dessous le modèle obtenu sous forme de graphes.
+L'utilisation d'un tel modèle hiérarchique dans ce cas peut s'expliquer par le fait que le poids d'un rat dépend de plusieurs facteurs. En effet on peut imaginer que le poids du rat varie en fonction du rat lui-même (par exemple en fonction de son sexe), en fonction de son alimentation ou encore en fonction de son environnement. Plus de détails sur l'expérience aurait pu nous indiquer les informations exactes pour ce modèle hiérarchique. Ci-dessous le modèle obtenu sous forme de graphe.
 
 ![Modèle hierarchique](Model.jpg){width=50%}
 
