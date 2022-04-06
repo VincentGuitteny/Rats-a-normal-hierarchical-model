@@ -254,11 +254,11 @@ Ainsi, on identifie une loi inverse gamma :
 
 # Implémentation et résultats
 
-Maintenant que nous avons obtenues et identifiées toutes nos lois conditionnelles pleines de nos paramètres, nous avons pu implémenter un échantilloneur de Gibbs et utiliser un algorithme MCMC sur la chaîne de Markov obtenue par cet échantilloneur. 
+Maintenant que nous avons obtenu et identifié toutes les lois conditionnelles pleines de nos paramètres, nous avons pu implémenter un échantilloneur de Gibbs et utiliser un algorithme MCMC sur la chaîne de Markov obtenue par cet échantilloneur. 
 
 Afin de comparer nos résultats avec ceux de l'expérience, nous avons utilisé un "burnin" de 1000 sur la chaîne de Markov de taille totale 10 000 qui est retourné par notre fonction simulant un échantilloneur de Gibbs. 
 
-On observe que l'on retrouve la même moyenne que ceux obtenus par les auteurs pour les paramètres $\alpha_0$ (défini par $\alpha_0 = \alpha_c - \bar{x}\beta_c$) et $\beta_c$ dont on donne les valeurs dans le tableau ci-dessous.
+On observe que l'on retrouve les mêmes moyennes que celles obtenues par les auteurs pour les paramètres $\alpha_0$ (défini par $\alpha_0 = \alpha_c - \bar{x}\beta_c$) et $\beta_c$ dont on donne les valeurs dans le tableau ci-dessous.
 
 | |Moyenne|
 |:---:|:---:|
